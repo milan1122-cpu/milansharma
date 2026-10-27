@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Milan Sharma — Personal Portfolio & Creative Developer</title>
+  <meta name="description"
+    content="Portfolio of Milan Sharma — Web Developer and UI/UX Designer bridging aesthetic brilliance and technical precision." />
+
+  <!-- Modern Google Fonts matching the reference design -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & VARIABLES
+       ========================================================================== */
+    :root {
+      --bg-color: #0c0806;
+      --surface-color: rgba(22, 16, 13, 0.45);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --accent-orange: #ff5722;
+      --accent-glow: rgba(255, 87, 34, 0.4);
+      --text-white: #ffffff;
+      --text-muted: #a39e99;
+      --font-display: 'League Gothic', 'Anton', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+      background-color: var(--bg-color);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      width: 100%;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       BACKGROUND VIDEO CANVAS & SCROLL SYSTEM
+       ========================================================================== */
+    .canvas-fixed-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    #hero-canvas {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.05) brightness(1.0);
+    }
+
+    /* Overlay radial warmth from top center matching the Robinsweb header */
+    .bg-ambient-glow {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at 50% 12%, rgba(224, 86, 36, 0.3) 0%, rgba(180, 60, 20, 0.1) 50%, rgba(12, 8, 6, 0.6) 90%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Subtle preloader */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #0c0806;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(255, 87, 34, 0.15);
+      border-top-color: var(--accent-orange);
+      border-radius: 50%;
+      animation: spin 0.9s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+      margin-bottom: 16px;
+    }
+
+    .loader-text {
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #b0a8a0;
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ==========================================================================
+       MAIN PAGE CONTENT CONTAINER (Z-INDEX ABOVE CANVAS)
+       ========================================================================== */
+    .page-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* Top Portfolio Banner Title (like in the Robinsweb graphic header) */
+    .banner-title-wrap {
+      width: 100%;
+      text-align: center;
+      padding: 16px 0 4px;
+      pointer-events: none;
+    }
+
+    .banner-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 12vw, 8.5rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #d64d1f;
+      opacity: 0.95;
+      line-height: 0.85;
+      font-weight: 400;
+    }
+
+    /* Main Container Card (matching the sleek rounded dark framed mockup) */
+    .main-site-frame {
+      max-width: 1280px;
+      margin: 0 auto;
+      border-radius: 0 0 28px 28px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: none;
+      background: rgba(14, 10, 8, 0.18);
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      margin-bottom: 80px;
+    }
+
+    /* ==========================================================================
+       HEADER & NAVIGATION BAR
+       ========================================================================== */
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 36px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(13, 9, 7, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .brand-logo {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-pill-menu {
+      display: flex;
+      align-items: center;
+      background: rgba(35, 28, 25, 0.85);
+      padding: 5px 6px;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 4px;
+    }
+
+    .nav-pill-item {
+      color: #c4beb8;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 7px 18px;
+      border-radius: 30px;
+      transition: all 0.25s ease;
+    }
+
+    .nav-pill-item:hover {
+      color: #ffffff;
+    }
+
+    .nav-pill-item.active {
+      background: #ffffff;
+      color: #0d0907;
+      font-weight: 600;
+    }
+
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #ff5722;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+      box-shadow: 0 4px 20px rgba(255, 87, 34, 0.35);
+    }
+
+    .btn-cta:hover {
+      background: #ff6e3f;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 87, 34, 0.5);
+    }
+
+    .btn-cta .arrow-icon-circle {
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ff5722;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* ==========================================================================
+       HERO SECTION WITH HUGE TYPOGRAPHY & FLOATING WIDGETS
+       ========================================================================== */
+    .hero-section {
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      padding: 40px 48px 50px;
+    }
+
+    .hero-greeting {
+      font-size: 1.15rem;
+      color: #f7a47d;
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Massive ROBIN AHMED layered typography */
+    .hero-big-name-wrap {
+      position: relative;
+      width: 100%;
+      text-align: center;
+      margin: 20px 0 40px;
+    }
+
+    .hero-big-name {
+      font-family: var(--font-display);
+      font-size: clamp(4.5rem, 16vw, 12rem);
+      line-height: 0.88;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.94);
+      user-select: none;
+      /* Subtle transparent gradient reveal */
+      background: linear-gradient(180deg, #ffffff 40%, rgba(255, 255, 255, 0.5) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Bottom Row of Hero Section */
+    .hero-bottom-grid {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 30px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Left Pitch */
+    .hero-pitch-card {
+      max-width: 420px;
+    }
+
+    .trust-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #c9c1b9;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .trust-dot {
+      width: 6px;
+      height: 6px;
+      background: #ff5722;
+      border-radius: 50%;
+    }
+
+    .hero-tagline {
+      font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-cta-buttons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-secondary-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      padding-bottom: 3px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-secondary-link:hover {
+      color: #ff5722;
+      border-color: #ff5722;
+    }
+
+    /* Right Glassmorphic Review Badge */
+    .client-satisfaction-card {
+      background: rgba(35, 25, 20, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 18px 24px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      max-width: 330px;
+      box-shadow: 0 16px 35px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .client-satisfaction-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .avatar-stack-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .status-header-text {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-indicator-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.85);
+      }
+    }
+
+    .avatar-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #1a1412;
+      margin-left: -8px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .avatar-circle:first-child {
+      margin-left: 0;
+    }
+
+    .avatar-action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ff5722;
+      font-weight: bold;
+      font-size: 13px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-rating-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f1ede8;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .card-rating-text span {
+      display: block;
+      font-weight: 400;
+      color: #a89f97;
+      font-size: 0.8rem;
+    }
+
+    .card-pill-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-pill-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #e6dfd8;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    /* ==========================================================================
+       TICKER MARQUEE METRICS BANNER
+       ========================================================================== */
+    .metrics-marquee-strip {
+      width: 100%;
+      background: transparent;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 22px 0;
+      margin: 30px 0;
+    }
+
+    .marquee-track {
+      display: inline-flex;
+      animation: ticker 25s linear infinite;
+    }
+
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+      padding: 0 24px;
+    }
+
+    .marquee-star {
+      color: #ff5722;
+      margin: 0 16px;
+      font-size: 1.2rem;
+    }
+
+    @keyframes ticker {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* ==========================================================================
+       ABOUT ME SECTION
+       ========================================================================== */
+    .about-section {
+      padding: 70px 48px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .section-badge-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #ff5722;
+    }
+
+    .about-bio-text {
+      font-size: clamp(1.4rem, 2.3vw, 2.2rem);
+      font-weight: 500;
+      line-height: 1.4;
+      color: #ded7cf;
+      letter-spacing: -0.015em;
+    }
+
+    .about-bio-text strong {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .about-action-row {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    /* ==========================================================================
+       CLIENT LOGOS ROW
+       ========================================================================== */
+    .client-logos-section {
+      padding: 20px 48px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .client-logo-item {
+      opacity: 0.65;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      filter: grayscale(1) invert(0.9);
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .client-logo-item:hover {
+      opacity: 1;
+      transform: scale(1.06);
+      filter: grayscale(0) invert(1);
+    }
+
+    /* ==========================================================================
+       SELECTED WORK / PROJECTS SECTION (STAGGERED 2-COLUMN GRID)
+       ========================================================================== */
+    .projects-section {
+      padding: 70px 48px 100px;
+    }
+
+    .projects-header {
+      margin-bottom: 50px;
+    }
+
+    .projects-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-top: 10px;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px 36px;
+      align-items: start;
+    }
+
+    /* Even alignment across both columns */
+    .projects-grid .project-col-right {
+      transform: none;
+    }
+
+    .project-card {
+      background: rgba(22, 17, 14, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      overflow: hidden;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+      cursor: pointer;
+    }
+
+    .project-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 87, 34, 0.4);
+    }
+
+    .project-img-wrapper {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: #120e0c;
+      flex-shrink: 0;
+    }
+
+    .project-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .project-card:hover .project-img-wrapper img {
+      transform: scale(1.05);
+    }
+
+    .project-info {
+      padding: 20px 8px 8px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .project-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      line-height: 1.15;
+      min-height: 2.3em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .project-desc {
+      font-size: 0.88rem;
+      color: #a69e96;
+      line-height: 1.45;
+      margin-bottom: 16px;
+      min-height: 2.9em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .project-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #d1c8c0;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Bottom Philosophy Statement */
+    .philosophy-banner {
+      padding: 90px 48px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 87, 34, 0.06) 100%);
+    }
+
+    .philosophy-quote {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5.5vw, 4.6rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      line-height: 1.1;
+      max-width: 900px;
+      margin: 0 auto 30px;
+    }
+
+    .philosophy-sub {
+      font-size: 1.05rem;
+      color: #b5aba1;
+      max-width: 600px;
+      margin: 0 auto 36px;
+    }
+
+    /* Footer */
+    .site-footer {
+      padding: 30px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.85rem;
+      color: #8c8279;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 960px) {
+      .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .projects-grid .project-col-right {
+        transform: none;
+      }
+
+      .about-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .hero-section {
+        padding: 30px 24px;
+      }
+
+      .site-nav {
+        padding: 16px 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Loading Animation Indicator -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text" id="loader-status">Loading experience (0%)...</div>
+  </div>
+
+  <!-- Background Animated Canvas (driven by smooth scroll) -->
+  <div class="canvas-fixed-wrapper">
+    <canvas id="hero-canvas"></canvas>
+  </div>
+
+  <!-- Warm ambient lighting glow matching Robin Ahmed's header atmosphere -->
+  <div class="bg-ambient-glow"></div>
+
+  <!-- Foreground Interactive Content -->
+  <div class="page-content" id="scroll-root">
+
+    <!-- Main Framed Portfolio Architecture -->
+    <main class="main-site-frame">
+
+      <!-- Navigation Header -->
+      <nav class="site-nav">
+        <a href="#home" class="brand-logo">MILAN's WEB</a>
+
+        <div class="nav-pill-menu">
+          <a href="#about" class="nav-pill-item active">About</a>
+          <a href="#projects" class="nav-pill-item">Projects</a>
+          <a href="#services" class="nav-pill-item">Services</a>
+          <a href="#testimonials" class="nav-pill-item">Testimonials</a>
+          <a href="#contact" class="nav-pill-item">Contact</a>
+        </div>
+
+        <a href="mailto:milansharmaa600@gmail.com?subject=Project%20Inquiry%20-%20Milan%20Sharma&body=Hi%20Milan,%0D%0A%0D%0AI'd%20love%20to%20discuss%20a%20project%20with%20you.%0D%0A%0D%0ABest%20regards," class="btn-cta contact-btn">
+          Start a Project
+          <span class="arrow-icon-circle">↗</span>
+        </a>
+      </nav>
+
+      <!-- Hero Section -->
+      <section class="hero-section" id="home">
+        <div class="hero-greeting">
+          <span></span> Hi, I am
+        </div>
+
+        <!-- Massive Header Title Display -->
+        <div class="hero-big-name-wrap">
+          <h1 class="hero-big-name">MILAN SHARMA</h1>
+        </div>
+
+        <!-- Hero Bottom Grid (Pitch + Social Proof Glass Card) -->
+        <div class="hero-bottom-grid">
+          <div class="hero-pitch-card">
+            <div class="trust-badge-row">
+              <span class="trust-dot"></span>
+              <span>Currently Trusted By Myself</span>
+            </div>
+            <h2 class="hero-tagline">A biggner UI/UX designer from Nepal</h2>
+            <div class="hero-cta-buttons">
+              <a href="mailto:milansharmaa600@gmail.com?subject=Project%20Inquiry%20-%20Milan%20Sharma&body=Hi%20Milan,%0D%0A%0D%0AI'd%20love%20to%20discuss%20a%20project%20with%20you.%0D%0A%0D%0ABest%20regards," class="btn-cta contact-btn">
+                Start a Project
+                <span class="arrow-icon-circle">↗</span>
+              </a>
+              <a href="#projects" class="btn-secondary-link">
+                View My Work ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Glassmorphic Status Card -->
+          <div class="client-satisfaction-card" id="testimonials">
+            <div class="avatar-stack-row">
+              <div class="status-header-text">
+                <span class="status-indicator-dot"></span>
+                Current status
+              </div>
+              <div class="avatar-action-btn">↗</div>
+            </div>
+            <div class="card-rating-text">
+              Currently learning AI use by MYSELF
+              <span>— Be One Of Them Today.</span>
+            </div>
+            <div class="card-pill-tags">
+              <span class="card-pill-tag">Learn with me</span>
+              <span class="card-pill-tag">12h Response</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Infinite Marquee Credentials Banner -->
+      <div class="metrics-marquee-strip">
+        <div class="marquee-track">
+          <div class="marquee-item">1.5 Years Experience</div>
+          <span class="marquee-star">✦</span>
+          <div class="marquee-item">2+ Projects</div>
+          <span class="marquee-star">✦</span>
+          <div class="marquee-item">99% Positive Reviews</div>
+          <span class="marquee-star">✦</span>
+          <div class="marquee-item">MID Tier UI/UX</div>
+          <span class="marquee-star">✦</span>
+          <div class="marquee-item">1.5 Years Experience</div>
+          <span class="marquee-star">✦</span>
+          <div class="marquee-item">2+ Projects</div>
+          <span class="marquee-star">✦</span>
+          <div class="marquee-item">99% Positive Reviews</div>
+          <span class="marquee-star">✦</span>
+          <div class="marquee-item">MID Tier UI/UX</div>
+          <span class="marquee-star">✦</span>
+        </div>
+      </div>
+
+      <!-- About Me Section -->
+      <section class="about-section" id="about">
+        <div class="section-badge-label">
+          <span class="trust-dot"></span> About Me
+        </div>
+        <div>
+          <p class="about-bio-text">
+            Hey there, I’m <strong>Milan Sharma</strong> — a UI/UX designer . I bridge the gap between
+            aesthetic brilliance and technical precision. I don’t just build sites that look expensive; I build systems
+            designed to scale your business and dominate your niche.
+          </p>
+          <div class="about-action-row">
+            <a href="mailto:milansharmaa600@gmail.com?subject=Project%20Inquiry%20-%20Milan%20Sharma&body=Hi%20Milan,%0D%0A%0D%0AI'd%20love%20to%20discuss%20a%20project%20with%20you.%0D%0A%0D%0ABest%20regards," class="btn-cta contact-btn">
+              Start a Project
+              <span class="arrow-icon-circle">↗</span>
+            </a>
+            <a href="#projects" class="btn-secondary-link">
+              View My Work ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blank spacer in place of logos strip -->
+      <div class="blank-spacer" style="height: 120px; width: 100%;"></div>
+
+      <!-- Selected Work / Recent Projects -->
+      <section class="projects-section" id="projects">
+        <div class="projects-header">
+          <div class="section-badge-label">
+            <span class="trust-dot"></span> Some Recent Projects
+          </div>
+          <h2 class="projects-title">Selected Work That Delivers Results</h2>
+        </div>
+
+        <div class="projects-grid">
+          <!-- Column 1: Top Left Project -->
+          <div class="project-col-left">
+            <article class="project-card">
+              <div class="project-img-wrapper">
+                <img src="assets/project_lawyer.jpg" alt="Lawyer Alexander's Landing Page" />
+              </div>
+              <div class="project-info">
+                <h3 class="project-name">Python Projects</h3>
+                <p class="project-desc">Worked on multiple python projects.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Python</span>
+                  <span class="project-tag">Logic</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Column 1: Bottom Left Project -->
+            <article class="project-card" style="margin-top: 48px;">
+              <div class="project-img-wrapper">
+                <img src="assets/project_hebrew.jpg" alt="Hebrew Marketing Agency's Website" />
+              </div>
+              <div class="project-info">
+                <h3 class="project-name">YouTube Thumbnail Designs</h3>
+                <p class="project-desc">Created eye-catching YouTube thumbnails that increased click-through rates
+                  and views.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Thumbnails</span>
+                  <span class="project-tag">Creative</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Column 2: Top Right Project (Staggered offset) -->
+          <div class="project-col-right">
+            <article class="project-card">
+              <div class="project-img-wrapper">
+                <img src="assets/project_trava.jpg" alt="KeyPharma Company's Trava Product Website" />
+              </div>
+              <div class="project-info">
+                <h3 class="project-name">Livestream Overlay Projects</h3>
+                <p class="project-desc">Built animated overlays that enhanced viewer engagement and stream production
+                  value.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Livestream</span>
+                  <span class="project-tag">Animation</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Column 2: Bottom Right Project -->
+            <article class="project-card" style="margin-top: 48px;">
+              <div class="project-img-wrapper">
+                <img src="assets/project_robert.jpg" alt="Robert's Legal Landing Page" />
+              </div>
+              <div class="project-info">
+                <h3 class="project-name">Personal Portfolio Website</h3>
+                <p class="project-desc">One of my major projects is building my own responsive portfolio website.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Web Design</span>
+                  <span class="project-tag">Landing Page</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Philosophy Quote -->
+      <section class="philosophy-banner" id="services">
+        <h2 class="philosophy-quote">I strive for pay attention to the smallest details</h2>
+        <p class="philosophy-sub">Every transition, every pixel, every layout is carefully crafted to leave a memorable
+          impression on your customers.</p>
+        <a href="mailto:milansharmaa600@gmail.com?subject=Project%20Inquiry%20-%20Milan%20Sharma&body=Hi%20Milan,%0D%0A%0D%0AI'd%20love%20to%20discuss%20a%20project%20with%20you.%0D%0A%0D%0ABest%20regards," class="btn-cta contact-btn" style="font-size: 1rem; padding: 14px 32px;">
+          Let's Build Something Exceptional
+          <span class="arrow-icon-circle">↗</span>
+        </a>
+      </section>
+
+      <!-- Site Footer -->
+      <footer class="site-footer" id="contact">
+        <div>© 2026 MILAN's WEB — Milan Sharma. All rights reserved.</div>
+        <div style="display: flex; gap: 20px;">
+          <a href="#" style="color: inherit; text-decoration: none;">Twitter / X</a>
+          <a href="https://www.facebook.com/mi1an.11" style="color: inherit; text-decoration: none;">Facebook</a>
+          <a href="https://www.instagram.com/mi1an.11/" style="color: inherit; text-decoration: none;">Instagram</a>
+          <a href="#" style="color: inherit; text-decoration: none;">GitHub</a>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       SCROLL-BASED CANVAS ANIMATION ENGINE
+       ========================================================================== -->
+  <script>
+    (function () {
+      const TOTAL_FRAMES = 240;
+      const canvas = document.getElementById("hero-canvas");
+      const ctx = canvas.getContext("2d", { alpha: false });
+      const loader = document.getElementById("loader");
+      const loaderStatus = document.getElementById("loader-status");
+
+      function getFrameSrc(index) {
+        const paddedIndex = String(index).padStart(4, "0");
+        return `frames/frame_${paddedIndex}.png`;
+      }
+
+      const images = new Array(TOTAL_FRAMES + 1);
+      let loadedCount = 0;
+
+      // State for smooth lerp scroll
+      let currentProgress = 0;
+      let targetProgress = 0;
+      let renderedFrame = -1;
+
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+
+        if (renderedFrame > 0 && images[renderedFrame] && images[renderedFrame].complete) {
+          drawFrame(images[renderedFrame]);
+        }
+      }
+
+      function drawFrame(img) {
+        if (!img || !img.naturalWidth) return;
+
+        const cw = canvas.width;
+        const ch = canvas.height;
+        const iw = img.naturalWidth;
+        const ih = img.naturalHeight;
+
+        // Maintain portrait framing with focus on the face and upper torso
+        const hRatio = cw / iw;
+        const vRatio = ch / ih;
+        const ratio = Math.max(hRatio, vRatio);
+
+        const drawW = iw * ratio;
+        const drawH = ih * ratio;
+        const drawX = (cw - drawW) / 2;
+        // Shift slightly upward so the head sits naturally beneath the top nav and behind the name
+        const drawY = Math.min(0, (ch - drawH) * 0.25);
+
+        ctx.fillStyle = "#0c0806";
+        ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(img, 0, 0, iw, ih, drawX, drawY, drawW, drawH);
+      }
+
+      function updateScrollTarget() {
+        const docElem = document.documentElement;
+        const maxScroll = docElem.scrollHeight - window.innerHeight;
+        const scrollTop = window.pageYOffset || docElem.scrollTop || 0;
+        targetProgress = maxScroll > 0 ? Math.min(Math.max(scrollTop / maxScroll, 0), 1) : 0;
+      }
+
+      function renderLoop() {
+        // High-end smooth damped interpolation
+        const ease = 0.08;
+        const diff = targetProgress - currentProgress;
+
+        if (Math.abs(diff) > 0.0001) {
+          currentProgress += diff * ease;
+        } else {
+          currentProgress = targetProgress;
+        }
+
+        const frameIndex = Math.min(
+          TOTAL_FRAMES,
+          Math.max(1, Math.round(currentProgress * (TOTAL_FRAMES - 1)) + 1)
+        );
+
+        if (frameIndex !== renderedFrame) {
+          const img = images[frameIndex];
+          if (img && img.complete && img.naturalWidth > 0) {
+            drawFrame(img);
+            renderedFrame = frameIndex;
+          } else {
+            // Find closest available frame
+            for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
+              const prev = images[frameIndex - offset];
+              if (prev && prev.complete && prev.naturalWidth > 0) {
+                drawFrame(prev);
+                renderedFrame = frameIndex - offset;
+                break;
+              }
+              const next = images[frameIndex + offset];
+              if (next && next.complete && next.naturalWidth > 0) {
+                drawFrame(next);
+                renderedFrame = frameIndex + offset;
+                break;
+              }
+            }
+          }
+        }
+
+        requestAnimationFrame(renderLoop);
+      }
+
+      function preloadImages() {
+        // Load first frame immediately
+        const firstImg = new Image();
+        firstImg.src = getFrameSrc(1);
+        firstImg.onload = () => {
+          images[1] = firstImg;
+          loadedCount++;
+          drawFrame(firstImg);
+          renderedFrame = 1;
+          loadRemainingFrames();
+        };
+      }
+
+      function loadRemainingFrames() {
+        const PRIORITY_BATCH = 25;
+
+        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+          if (i === 1) continue;
+
+          const img = new Image();
+          img.src = getFrameSrc(i);
+          img.onload = () => {
+            loadedCount++;
+            const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+            loaderStatus.textContent = `Loading experience (${pct}%)...`;
+
+            if (loadedCount >= PRIORITY_BATCH && !loader.classList.contains("hidden")) {
+              loader.classList.add("hidden");
+            }
+          };
+          img.onerror = () => {
+            loadedCount++;
+          };
+          images[i] = img;
+        }
+      }
+
+      // Robust email compose opener: launches Gmail compose directly in a new tab
+      function setupContactButtons() {
+        const email = "milansharmaa600@gmail.com";
+        const subject = encodeURIComponent("Project Inquiry - Milan Sharma");
+        const body = encodeURIComponent("Hi Milan,\n\nI would love to discuss a project with you.\n\nBest regards,");
+
+        // Direct web Gmail URL ensures it opens compose right away in browser
+        const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+        const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
+
+        document.querySelectorAll(".contact-btn").forEach((btn) => {
+          btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            // Open Gmail web compose in a new tab
+            const win = window.open(gmailComposeUrl, "_blank");
+            // If popups are blocked or user prefers local mail client, fallback to mailto
+            if (!win || win.closed || typeof win.closed === "undefined") {
+              window.location.href = mailtoUrl;
+            }
+          });
+        });
+      }
+
+      // Smooth scrolling for navigation links
+      function setupSmoothNavScrolling() {
+        const navLinks = document.querySelectorAll('a[href^="#"]');
+
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            const targetId = this.getAttribute("href");
+            if (!targetId || targetId === "#") return;
+
+            const targetElement = document.querySelector(targetId);
+            if (!targetElement) return;
+
+            e.preventDefault();
+
+            // Calculate precise destination accounting for sticky navbar height
+            const nav = document.querySelector(".site-nav");
+            const navHeight = nav ? nav.offsetHeight : 80;
+            const targetPosition =
+              targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight - 12;
+
+            // Update active pill button state
+            if (this.classList.contains("nav-pill-item")) {
+              document.querySelectorAll(".nav-pill-item").forEach((item) => {
+                item.classList.remove("active");
+              });
+              this.classList.add("active");
+            }
+
+            // High-precision smooth scroll with custom easing
+            smoothScrollTo(targetPosition, 850);
+          });
+        });
+      }
+
+      function smoothScrollTo(targetY, duration = 800) {
+        const startY = window.pageYOffset;
+        const diff = targetY - startY;
+        let startTime = null;
+
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // EaseInOutCubic for organic deceleration
+          const easeProgress =
+            progress < 0.5
+              ? 4 * progress * progress * progress
+              : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+          window.scrollTo(0, startY + diff * easeProgress);
+
+          if (elapsed < duration) {
+            requestAnimationFrame(step);
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      window.addEventListener("scroll", updateScrollTarget, { passive: true });
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+        updateScrollTarget();
+      });
+
+      resizeCanvas();
+      updateScrollTarget();
+      preloadImages();
+      setupSmoothNavScrolling();
+      setupContactButtons();
+      requestAnimationFrame(renderLoop);
+    })();
+  </script>
+</body>
+
+</html>
